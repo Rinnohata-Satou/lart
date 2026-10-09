@@ -249,6 +249,7 @@ if( !isset($_REQUEST['id']) || !isset($_REQUEST['type']) ) {
                                                     }
                                                     ?>
                                                 </div>
+                                                <p class="stock-availability">Remaining stock: <?php echo (int)$row['p_qty']; ?></p>
                                                 <?php if($row['p_qty'] == 0): ?>
                                                     <div class="out-of-stock">
                                                         <div class="inner">

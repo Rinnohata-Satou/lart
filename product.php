@@ -464,6 +464,7 @@ if($success_message1 != '') {
                                     ₱<?php echo $p_current_price; ?>
                                 </span>
                             </div>
+                            <p class="p-stock-availability">Remaining stock: <?php echo (int)$p_qty; ?></p>
                             <input type="hidden" name="p_current_price" value="<?php echo $p_current_price; ?>">
                             <input type="hidden" name="p_name" value="<?php echo $p_name; ?>">
                             <input type="hidden" name="p_featured_photo" value="<?php echo $p_featured_photo; ?>">
@@ -757,7 +758,14 @@ if($success_message1 != '') {
                                     }
                                     ?>
                                 </div>
-                                <p><a href="product.php?id=<?php echo $row['p_id']; ?>"><?php echo LANG_VALUE_154; ?></a></p>
+                                <p class="stock-availability">Remaining stock: <?php echo (int)$row['p_qty']; ?></p>
+                                <?php if((int)$row['p_qty'] === 0): ?>
+                                    <div class="out-of-stock">
+                                        <div class="inner">Out Of Stock</div>
+                                    </div>
+                                <?php else: ?>
+                                    <p><a href="product.php?id=<?php echo $row['p_id']; ?>"><?php echo LANG_VALUE_154; ?></a></p>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <?php

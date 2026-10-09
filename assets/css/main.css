@@ -622,6 +622,19 @@ Mobile style's
   text-align: center;
 }
 
+.product .text .stock-availability {
+  color: #555;
+  font-size: 14px;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.product .p-stock-availability {
+  color: #555;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
 .product .text p a:hover {
   background: #333;
 }

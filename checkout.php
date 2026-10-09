@@ -126,16 +126,16 @@ if(!isset($_SESSION['cart_p_id'])) {
                             <td><?php echo $arr_cart_p_qty[$i]; ?></td>
                             <td class="text-right">
                                 <?php
-                                $row_total_price = $arr_cart_p_current_price[$i]*$arr_cart_p_qty[$i];
+                                $row_total_price = (float)str_replace(',', '', $arr_cart_p_current_price[$i]) * (float)$arr_cart_p_qty[$i];
                                 $table_total_price = $table_total_price + $row_total_price;
                                 ?>
-                                ₱<?php echo $row_total_price; ?>
+                                ₱<?php echo number_format($row_total_price, 2); ?>
                             </td>
                         </tr>
                         <?php endfor; ?>           
                         <tr>
                             <th colspan="7" class="total-text"><?php echo LANG_VALUE_81; ?></th>
-                            <th class="total-amount">₱<?php echo $table_total_price; ?></th>
+                            <th class="total-amount">₱<?php echo number_format($table_total_price, 2); ?></th>
                         </tr>
                         <?php
 $shipping_cost = 0;
@@ -167,7 +167,7 @@ if (isset($_SESSION['customer']['cust_country'])) {
         <?php
         $final_total = $table_total_price;
         ?>
-        ₱<?php echo $final_total; ?>
+        ₱<?php echo number_format($final_total, 2); ?>
     </th>
 </tr>
                     </table> 

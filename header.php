@@ -316,10 +316,10 @@ foreach ($result as $row) {
 	                    }
 	                    $table_total_price = 0; // Initialize the variable to a numeric value
 for ($i = 1; $i <= count($arr_cart_p_qty); $i++) {
-    $row_total_price = floatval($arr_cart_p_current_price[$i]) * floatval($arr_cart_p_qty[$i]); // Convert the values to floats
+    $row_total_price = (float)str_replace(',', '', $arr_cart_p_current_price[$i]) * (float)$arr_cart_p_qty[$i];
     $table_total_price += $row_total_price;
 }
-echo $table_total_price;
+echo number_format($table_total_price, 2);
 					} 
 					?>)</a></li>
 				</ul>

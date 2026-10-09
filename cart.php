@@ -11,7 +11,8 @@ foreach ($result as $row) {
 
 <?php
 $error_message = '';
-if(isset($_POST['form1'])) {
+$proceed_to_checkout = isset($_POST['proceed_to_checkout']);
+if(isset($_POST['form1']) || $proceed_to_checkout) {
 
     $i = 0;
     $statement = $pdo->prepare("SELECT * FROM tbl_product");
@@ -59,6 +60,8 @@ if(isset($_POST['form1'])) {
     
     <?php if($allow_update == 0): ?>
     	<script>alert('<?php echo $error_message; ?>');</script>
+	<?php elseif($proceed_to_checkout): ?>
+		<script>window.location.href = 'checkout.php';</script>
 	<?php else: ?>
 		<script>alert('All Items Quantity Update is Successful!');</script>
 	<?php endif; ?>
@@ -181,10 +184,10 @@ if(isset($_POST['form1'])) {
                             </td>
                             <td class="text-right">
                                 <?php
-                                $row_total_price = floatval($arr_cart_p_current_price[$i]) * floatval($arr_cart_p_qty[$i]);
+                                $row_total_price = (float)str_replace(',', '', $arr_cart_p_current_price[$i]) * (float)$arr_cart_p_qty[$i];
                                 $table_total_price = $table_total_price + $row_total_price;
                                 ?>
-                                <?php echo "&#8369;"; ?><?php echo $row_total_price; ?>
+                                <?php echo "&#8369;"; ?><?php echo number_format($row_total_price, 2); ?>
                             </td>
                             <td class="text-center">
                                 <a onclick="return confirmDelete();" href="cart-item-delete.php?id=<?php echo $arr_cart_p_id[$i]; ?>&size=<?php echo $arr_cart_size_id[$i]; ?>&color=<?php echo $arr_cart_color_id[$i]; ?>" class="trash"><i class="fa fa-trash" style="color:red;"></i></a>
@@ -193,7 +196,7 @@ if(isset($_POST['form1'])) {
                         <?php endfor; ?>
                         <tr>
                             <th colspan="7" class="total-text">Total</th>
-                            <th class="total-amount"><?php echo "&#8369;"; ?><?php echo $table_total_price; ?></th>
+                            <th class="total-amount"><?php echo "&#8369;"; ?><?php echo number_format($table_total_price, 2); ?></th>
                             <th></th>
                         </tr>
                     </table> 
@@ -203,7 +206,7 @@ if(isset($_POST['form1'])) {
                     <ul>
                         <li><input type="submit" value="<?php echo LANG_VALUE_20; ?>" class="btn btn-primary" name="form1"></li>
                         <li><a href="index.php" class="btn btn-primary"><?php echo LANG_VALUE_85; ?></a></li>
-                        <li><a href="checkout.php" class="btn btn-primary"><?php echo LANG_VALUE_23; ?></a></li>
+                        <li><input type="submit" name="proceed_to_checkout" value="<?php echo LANG_VALUE_23; ?>" class="btn btn-primary"></li>
                     </ul>
                 </div>
                 </form>
