@@ -169,12 +169,22 @@ if (isset($_POST['form1'])) {
                                     <textarea name="cust_address" class="form-control" cols="30" rows="10" style="height:70px;"><?php if(isset($_POST['cust_address'])){echo $_POST['cust_address'];} ?></textarea>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <label for=""><?php echo LANG_VALUE_96; ?> *</label>
-                                    <input type="password" class="form-control" name="cust_password">
+                                    <label for="cust_password"><?php echo LANG_VALUE_96; ?> *</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="cust_password" name="cust_password">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" data-password-toggle="cust_password" aria-controls="cust_password" aria-label="Show password" aria-pressed="false"><i class="fa fa-eye" aria-hidden="true"></i><span class="sr-only">Show password</span></button>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <label for=""><?php echo LANG_VALUE_98; ?> *</label>
-                                    <input type="password" class="form-control" name="cust_re_password">
+                                    <label for="cust_re_password"><?php echo LANG_VALUE_98; ?> *</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="cust_re_password" name="cust_re_password">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" data-password-toggle="cust_re_password" aria-controls="cust_re_password" aria-label="Show password" aria-pressed="false"><i class="fa fa-eye" aria-hidden="true"></i><span class="sr-only">Show password</span></button>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for=""></label>

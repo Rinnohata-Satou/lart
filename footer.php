@@ -159,6 +159,20 @@ foreach ($result as $row) {
 <script src="assets/js/select2.full.min.js"></script>
 <script src="assets/js/custom.js"></script>
 <script>
+	var passwordToggleButtons = document.querySelectorAll('[data-password-toggle]');
+	for (var i = 0; i < passwordToggleButtons.length; i++) {
+		passwordToggleButtons[i].addEventListener('click', function() {
+			var passwordInput = document.getElementById(this.getAttribute('data-password-toggle')),
+				isVisible = passwordInput.type === 'text';
+
+			passwordInput.type = isVisible ? 'password' : 'text';
+			this.setAttribute('aria-label', (isVisible ? 'Show' : 'Hide') + ' password');
+			this.setAttribute('aria-pressed', isVisible ? 'false' : 'true');
+			this.querySelector('i').className = 'fa ' + (isVisible ? 'fa-eye' : 'fa-eye-slash');
+			this.querySelector('.sr-only').textContent = (isVisible ? 'Show' : 'Hide') + ' password';
+		});
+	}
+
 	function confirmDelete()
 	{
 	    return confirm("Sure you want to delete this data?");
