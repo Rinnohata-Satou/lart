@@ -11,6 +11,8 @@ foreach ($result as $row) {
 
 <?php
 $error_message = '';
+$stock_error = isset($_SESSION['stock_error']) ? $_SESSION['stock_error'] : '';
+unset($_SESSION['stock_error']);
 $proceed_to_checkout = isset($_POST['proceed_to_checkout']);
 if(isset($_POST['form1']) || $proceed_to_checkout) {
 
@@ -86,6 +88,9 @@ if(isset($_POST['form1']) || $proceed_to_checkout) {
                     <?php echo '<h2 class="text-center">Cart is Empty!!</h2></br>'; ?>
                     <?php echo '<h4 class="text-center">Add products to the cart in order to view it here.</h4>'; ?>
                 <?php else: ?>
+                <?php if($stock_error !== ''): ?>
+                    <p style="color:red;"><?php echo htmlspecialchars($stock_error, ENT_QUOTES, 'UTF-8'); ?></p>
+                <?php endif; ?>
                 <form action="" method="post">
                     <?php $csrf->echoInputField(); ?>
 				<div class="cart">
