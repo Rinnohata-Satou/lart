@@ -10,21 +10,21 @@ foreach ($result as $row) {
 ?>
 
 <?php
-$error_message = '';
 $stock_error = isset($_SESSION['stock_error']) ? $_SESSION['stock_error'] : '';
 unset($_SESSION['stock_error']);
+$quantity_errors = array();
+$submitted_quantities = array();
+$cart_updated = false;
+$product_stock = array();
+$statement = $pdo->prepare("SELECT p_id, p_qty FROM tbl_product");
+$statement->execute();
+$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+foreach ($result as $row) {
+    $product_stock[$row['p_id']] = (int)$row['p_qty'];
+}
+
 $proceed_to_checkout = isset($_POST['proceed_to_checkout']);
 if(isset($_POST['form1']) || $proceed_to_checkout) {
-
-    $i = 0;
-    $statement = $pdo->prepare("SELECT * FROM tbl_product");
-    $statement->execute();
-    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($result as $row) {
-        $i++;
-        $table_product_id[$i] = $row['p_id'];
-        $table_quantity[$i] = $row['p_qty'];
-    }
 
     $i=0;
     foreach($_POST['product_id'] as $val) {
@@ -44,31 +44,26 @@ if(isset($_POST['form1']) || $proceed_to_checkout) {
     
     $allow_update = 1;
     for($i=1;$i<=count($arr1);$i++) {
-        for($j=1;$j<=count($table_product_id);$j++) {
-            if($arr1[$i] == $table_product_id[$j]) {
-                $temp_index = $j;
-                break;
-            }
-        }
-        if($table_quantity[$temp_index] < $arr2[$i]) {
-        	$allow_update = 0;
-            $error_message .= '"'.$arr2[$i].'" items are not available for "'.$arr3[$i].'"\n';
-        } else {
-            $_SESSION['cart_p_qty'][$i] = $arr2[$i];
+        $submitted_quantities[$i] = is_scalar($arr2[$i]) ? (string)$arr2[$i] : '';
+        $product_id = is_scalar($arr1[$i]) ? (string)$arr1[$i] : '';
+        $quantity = filter_var($submitted_quantities[$i], FILTER_VALIDATE_INT);
+        if(!isset($product_stock[$product_id]) || $quantity === false || $quantity < 1 || $quantity > $product_stock[$product_id]) {
+            $allow_update = 0;
+            $available_quantity = isset($product_stock[$product_id]) ? $product_stock[$product_id] : 0;
+            $quantity_errors[] = $arr3[$i].': only '.$available_quantity.' item(s) remain in stock.';
         }
     }
-    $error_message .= '\nOther items quantity are updated successfully!';
-    ?>
-    
-    <?php if($allow_update == 0): ?>
-    	<script>alert('<?php echo $error_message; ?>');</script>
-	<?php elseif($proceed_to_checkout): ?>
-		<script>window.location.href = 'checkout.php';</script>
-	<?php else: ?>
-		<script>alert('All Items Quantity Update is Successful!');</script>
-	<?php endif; ?>
-    <?php
 
+    if($allow_update) {
+        for($i=1;$i<=count($arr1);$i++) {
+            $_SESSION['cart_p_qty'][$i] = (int)$arr2[$i];
+        }
+        if($proceed_to_checkout) {
+            header('location: checkout.php');
+            exit;
+        }
+        $cart_updated = true;
+    }
 }
 ?>
 
@@ -89,7 +84,20 @@ if(isset($_POST['form1']) || $proceed_to_checkout) {
                     <?php echo '<h4 class="text-center">Add products to the cart in order to view it here.</h4>'; ?>
                 <?php else: ?>
                 <?php if($stock_error !== ''): ?>
-                    <p style="color:red;"><?php echo htmlspecialchars($stock_error, ENT_QUOTES, 'UTF-8'); ?></p>
+                    <div class="alert alert-danger" role="alert"><?php echo htmlspecialchars($stock_error, ENT_QUOTES, 'UTF-8'); ?></div>
+                <?php endif; ?>
+                <?php if($cart_updated): ?>
+                    <div class="alert alert-success" role="status">Cart quantities updated successfully.</div>
+                <?php endif; ?>
+                <?php if(count($quantity_errors) > 0): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <strong>Please adjust the quantity:</strong>
+                        <ul>
+                            <?php foreach($quantity_errors as $quantity_error): ?>
+                                <li><?php echo htmlspecialchars($quantity_error, ENT_QUOTES, 'UTF-8'); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
                 <?php endif; ?>
                 <form action="" method="post">
                     <?php $csrf->echoInputField(); ?>
@@ -185,7 +193,7 @@ if(isset($_POST['form1']) || $proceed_to_checkout) {
                             <td>
                                 <input type="hidden" name="product_id[]" value="<?php echo $arr_cart_p_id[$i]; ?>">
                                 <input type="hidden" name="product_name[]" value="<?php echo $arr_cart_p_name[$i]; ?>">
-                                <input type="number" class="input-text qty text" step="1" min="1" max="" name="quantity[]" value="<?php echo $arr_cart_p_qty[$i]; ?>" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric">
+                                <input type="number" class="input-text qty text" step="1" min="1" max="<?php echo isset($product_stock[$arr_cart_p_id[$i]]) ? $product_stock[$arr_cart_p_id[$i]] : 0; ?>" name="quantity[]" value="<?php echo isset($submitted_quantities[$i]) ? htmlspecialchars($submitted_quantities[$i], ENT_QUOTES, 'UTF-8') : $arr_cart_p_qty[$i]; ?>" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" required>
                             </td>
                             <td class="text-right">
                                 <?php
