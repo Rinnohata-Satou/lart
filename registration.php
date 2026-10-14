@@ -88,7 +88,7 @@ if (isset($_POST['form1'])) {
                                         $token,
                                         $cust_datetime,
                                         $cust_timestamp,
-                                        0
+                                        1
                                     ));
 
         // Send email for confirmation of the account
@@ -114,7 +114,7 @@ if (isset($_POST['form1'])) {
         unset($_POST['cust_phone']);
         unset($_POST['cust_address']);
 
-        $success_message = LANG_VALUE_152;
+        $success_message = 'Your registration is complete. Your account is active. <a href="'.BASE_URL.'login.php">'.LANG_VALUE_11.'</a>';
     }
 }
 ?>
