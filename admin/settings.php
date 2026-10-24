@@ -393,7 +393,7 @@ if(isset($_POST['form7_1'])) {
         }
 
         // updating the data
-        $final_name = 'banner_login'.'.'.$ext;
+        $final_name = 'banner_login_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -434,7 +434,7 @@ if(isset($_POST['form7_2'])) {
         }
 
         // updating the data
-        $final_name = 'banner_registration'.'.'.$ext;
+        $final_name = 'banner_registration_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -475,7 +475,7 @@ if(isset($_POST['form7_3'])) {
         }
 
         // updating the data
-        $final_name = 'banner_forget_password'.'.'.$ext;
+        $final_name = 'banner_forget_password_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -516,7 +516,7 @@ if(isset($_POST['form7_4'])) {
         }
 
         // updating the data
-        $final_name = 'banner_reset_password'.'.'.$ext;
+        $final_name = 'banner_reset_password_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -558,7 +558,7 @@ if(isset($_POST['form7_6'])) {
         }
 
         // updating the data
-        $final_name = 'banner_search'.'.'.$ext;
+        $final_name = 'banner_search_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -599,7 +599,7 @@ if(isset($_POST['form7_7'])) {
         }
 
         // updating the data
-        $final_name = 'banner_cart'.'.'.$ext;
+        $final_name = 'banner_cart_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -640,7 +640,7 @@ if(isset($_POST['form7_8'])) {
         }
 
         // updating the data
-        $final_name = 'banner_checkout'.'.'.$ext;
+        $final_name = 'banner_checkout_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -681,7 +681,7 @@ if(isset($_POST['form7_9'])) {
         }
 
         // updating the data
-        $final_name = 'banner_product_category'.'.'.$ext;
+        $final_name = 'banner_product_category_' . bin2hex(random_bytes(8)) . '.' . $ext;
         move_uploaded_file( $path_tmp, '../assets/uploads/'.$final_name );
 
         // updating the database
@@ -1481,7 +1481,6 @@ foreach ($result as $row) {
 
                             <table class="table table-bordered">
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Login Page Banner</h4>
                                         <p>
@@ -1489,14 +1488,14 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Login Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_1">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Registration Page Banner</h4>
                                         <p>
@@ -1504,14 +1503,14 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Registration Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_2">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Forget Password Page Banner</h4>
                                         <p>
@@ -1519,14 +1518,14 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Forget Password Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_3">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Reset Password Page Banner</h4>
                                         <p>
@@ -1534,15 +1533,15 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Reset Password Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_4">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
                                 
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Search Page Banner</h4>
                                         <p>
@@ -1550,16 +1549,16 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Search Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_6">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
 
 
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Cart Page Banner</h4>
                                         <p>
@@ -1567,16 +1566,16 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Cart Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_7">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
 
 
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Checkout Page Banner</h4>
                                         <p>
@@ -1584,15 +1583,15 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Checkout Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_8">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
 
                                 <tr>
-                                    <form action="" method="post" enctype="multipart/form-data">
                                     <td style="width:50%">
                                         <h4>Existing Product Category Page Banner</h4>
                                         <p>
@@ -1600,11 +1599,12 @@ foreach ($result as $row) {
                                         </p>                                        
                                     </td>
                                     <td style="width:50%">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                         <h4>Change Product Category Page Banner</h4>
                                         Select Photo<input type="file" name="photo">
                                         <input type="submit" class="btn btn-primary btn-xs" value="Change" style="margin-top:10px;" name="form7_9">
+                                        </form>
                                     </td>
-                                    </form>
                                 </tr>
 
                                <!-- <tr>
