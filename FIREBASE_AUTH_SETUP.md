@@ -15,6 +15,6 @@ Firebase sends the email from its managed sender, so this flow does not require 
 
 Run `database/email-verification-migration.sql` once against the site's database before deploying the updated PHP files. Existing customers remain verified; new registrations are inserted as unverified. Admin-disabled accounts remain disabled because verification does not change `cust_status`.
 
-Test with a new `@gmail.com` address: registration should send a Firebase verification email, login should be blocked before clicking its link, and verification should allow a subsequent login. A non-Gmail address should be rejected both by the browser form and the PHP handler.
+Test with a new `@gmail.com` or `@tip.edu.ph` address: registration should send a Firebase verification email, login should be blocked before clicking its link, and verification should allow a subsequent login. An address from another domain should be rejected both by the browser form and the PHP handler.
 
-The Gmail restriction checks the address suffix only. Firebase email verification confirms access to that mailbox; it does not establish a person's identity or guarantee future deliverability.
+The allowed-domain restriction checks the address suffix only. Firebase email verification confirms access to that mailbox; it does not establish a person's identity or guarantee future deliverability.

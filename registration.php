@@ -25,9 +25,9 @@ if (isset($_POST['form1'])) {
         $valid = 0;
         $error_message .= LANG_VALUE_131."<br>";
     } else {
-        if (filter_var($cust_email, FILTER_VALIDATE_EMAIL) === false || strtolower(substr(strrchr($cust_email, '@'), 1)) !== 'gmail.com') {
+        if (filter_var($cust_email, FILTER_VALIDATE_EMAIL) === false || !in_array(strtolower(substr(strrchr($cust_email, '@'), 1)), array('gmail.com', 'tip.edu.ph'), true)) {
             $valid = 0;
-            $error_message .= 'Please enter a valid Gmail address ending in @gmail.com.<br>';
+            $error_message .= 'Please enter a valid Gmail or TIP email address ending in @gmail.com or @tip.edu.ph.<br>';
         } else {
             $statement = $pdo->prepare("SELECT * FROM tbl_customer WHERE cust_email=?");
             $statement->execute(array($cust_email));
@@ -182,7 +182,7 @@ if (isset($_POST['form1'])) {
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for="cust_email"><?php echo LANG_VALUE_94; ?> *</label>
-                                    <input type="email" class="form-control" id="cust_email" name="cust_email" pattern="[^@\s]+@[Gg][Mm][Aa][Ii][Ll]\.com" title="Use a Gmail address ending in @gmail.com" required value="<?php if(isset($_POST['cust_email'])){echo htmlspecialchars($_POST['cust_email'], ENT_QUOTES, 'UTF-8');} ?>">
+                                    <input type="email" class="form-control" id="cust_email" name="cust_email" pattern="[^@\s]+@([Gg][Mm][Aa][Ii][Ll]\.com|[Tt][Ii][Pp]\.edu\.ph)" title="Use a Gmail address or a TIP school email ending in @tip.edu.ph" required value="<?php if(isset($_POST['cust_email'])){echo htmlspecialchars($_POST['cust_email'], ENT_QUOTES, 'UTF-8');} ?>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for=""><?php echo LANG_VALUE_104; ?> *</label>
