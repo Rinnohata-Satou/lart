@@ -37,6 +37,8 @@ if(isset($_POST['form1'])) {
             } else {
                 if($cust_status == 0) {
                     $error_message .= LANG_VALUE_148.'<br>';
+                } elseif ((int)$row['cust_email_verified'] !== 1) {
+                    $error_message .= 'Please verify your Gmail address using the link we emailed you before logging in.<br>';
                 } else {
                     $_SESSION['customer'] = $row;
                     header("location: ".BASE_URL."dashboard.php");

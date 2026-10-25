@@ -1,4 +1,5 @@
 <?php require_once('header.php'); ?>
+<?php require_once('admin/inc/firebase-auth.php'); ?>
 
 <?php
 $statement = $pdo->prepare("SELECT * FROM tbl_settings WHERE id=1");
@@ -13,22 +14,23 @@ foreach ($result as $row) {
 if (isset($_POST['form1'])) {
 
     $valid = 1;
+    $cust_email = isset($_POST['cust_email']) ? trim($_POST['cust_email']) : '';
 
     if(empty($_POST['cust_name'])) {
         $valid = 0;
         $error_message .= LANG_VALUE_123."<br>";
     }
 
-    if(empty($_POST['cust_email'])) {
+    if(empty($cust_email)) {
         $valid = 0;
         $error_message .= LANG_VALUE_131."<br>";
     } else {
-        if (filter_var($_POST['cust_email'], FILTER_VALIDATE_EMAIL) === false) {
+        if (filter_var($cust_email, FILTER_VALIDATE_EMAIL) === false || strtolower(substr(strrchr($cust_email, '@'), 1)) !== 'gmail.com') {
             $valid = 0;
-            $error_message .= LANG_VALUE_134."<br>";
+            $error_message .= 'Please enter a valid Gmail address ending in @gmail.com.<br>';
         } else {
             $statement = $pdo->prepare("SELECT * FROM tbl_customer WHERE cust_email=?");
-            $statement->execute(array($_POST['cust_email']));
+            $statement->execute(array($cust_email));
             $total = $statement->rowCount();                            
             if($total) {
                 $valid = 0;
@@ -61,12 +63,29 @@ if (isset($_POST['form1'])) {
 
     if($valid == 1) {
 
-        $token = md5(time());
+        $firebase_signup = firebase_auth_request('accounts:signUp', array(
+            'email' => $cust_email,
+            'password' => $_POST['cust_password'],
+            'returnSecureToken' => true
+        ));
+
+        if (!$firebase_signup['ok']) {
+            if ($firebase_signup['error'] === 'EMAIL_EXISTS') {
+                $error_message .= 'This Gmail address is already registered.<br>';
+            } else {
+                $error_message .= 'Firebase sign-up could not be completed. Check the Firebase setup and try again.<br>';
+            }
+            $valid = 0;
+        }
+    }
+
+    if($valid == 1) {
+        $token = bin2hex(random_bytes(32));
         $cust_datetime = date('Y-m-d h:i:s');
         $cust_timestamp = time();
 
-        // saving into the database
-        $statement = $pdo->prepare("INSERT INTO tbl_customer (
+        try {
+            $statement = $pdo->prepare("INSERT INTO tbl_customer (
                                         cust_name,
                                         cust_cname,
                                         cust_email,
@@ -76,45 +95,50 @@ if (isset($_POST['form1'])) {
                                         cust_token,
                                         cust_datetime,
                                         cust_timestamp,
-                                        cust_status
-                                    ) VALUES (?,?,?,?,?,?,?,?,?,?)");
-        $statement->execute(array(
+                                        cust_status,
+                                        cust_email_verified
+                                    ) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+            $statement->execute(array(
                                         strip_tags($_POST['cust_name']),
                                         strip_tags($_POST['cust_cname']),
-                                        strip_tags($_POST['cust_email']),
+                                        $cust_email,
                                         strip_tags($_POST['cust_phone']),
                                         strip_tags($_POST['cust_address']),
                                         md5($_POST['cust_password']),
                                         $token,
                                         $cust_datetime,
                                         $cust_timestamp,
-                                        1
+                                        1,
+                                        0
                                     ));
+        } catch (PDOException $exception) {
+            firebase_auth_request('accounts:delete', array('idToken' => $firebase_signup['data']['idToken']));
+            $error_message .= 'Your account could not be saved. Please try again.<br>';
+            $valid = 0;
+        }
 
-        // Send email for confirmation of the account
-        $to = $_POST['cust_email'];
-        
-        $subject = LANG_VALUE_150;
-        $verify_link = BASE_URL.'verify.php?email='.$to.'&token='.$token;
-        $message = '
-'.LANG_VALUE_151.'<br><br>
+        if ($valid == 1) {
+            $verification_email = firebase_auth_request('accounts:sendOobCode', array(
+                'requestType' => 'VERIFY_EMAIL',
+                'idToken' => $firebase_signup['data']['idToken']
+            ));
 
-<a href="'.$verify_link.'">'.$verify_link.'</a>';
+            if (!$verification_email['ok']) {
+                $statement = $pdo->prepare("DELETE FROM tbl_customer WHERE cust_email=? AND cust_email_verified=0");
+                $statement->execute(array($cust_email));
+                firebase_auth_request('accounts:delete', array('idToken' => $firebase_signup['data']['idToken']));
+                $error_message .= 'The verification email could not be sent. Please try registering again later.<br>';
+                $valid = 0;
+            } else {
+                unset($_POST['cust_name']);
+                unset($_POST['cust_cname']);
+                unset($_POST['cust_email']);
+                unset($_POST['cust_phone']);
+                unset($_POST['cust_address']);
 
-        $headers = "From: noreply@" . BASE_URL . "\r\n" .
-                   "Reply-To: noreply@" . BASE_URL . "\r\n" .
-                   "X-Mailer: PHP/" . phpversion() . "\r\n" . 
-                   "MIME-Version: 1.0\r\n" . 
-                   "Content-Type: text/html; charset=ISO-8859-1\r\n";
-        
-        // Sending Email
-        unset($_POST['cust_name']);
-        unset($_POST['cust_cname']);
-        unset($_POST['cust_email']);
-        unset($_POST['cust_phone']);
-        unset($_POST['cust_address']);
-
-        $success_message = 'Your registration is complete. Your account is active. <a href="'.BASE_URL.'login.php">'.LANG_VALUE_11.'</a>';
+                $success_message = 'Registration received. Check your Gmail inbox and verify your address before logging in.';
+            }
+        }
     }
 }
 ?>
@@ -157,8 +181,8 @@ if (isset($_POST['form1'])) {
                                     <input type="text" class="form-control" name="cust_cname" value="<?php if(isset($_POST['cust_cname'])){echo $_POST['cust_cname'];} ?>">
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <label for=""><?php echo LANG_VALUE_94; ?> *</label>
-                                    <input type="email" class="form-control" name="cust_email" value="<?php if(isset($_POST['cust_email'])){echo $_POST['cust_email'];} ?>">
+                                    <label for="cust_email"><?php echo LANG_VALUE_94; ?> *</label>
+                                    <input type="email" class="form-control" id="cust_email" name="cust_email" pattern="[^@\s]+@[Gg][Mm][Aa][Ii][Ll]\.com" title="Use a Gmail address ending in @gmail.com" required value="<?php if(isset($_POST['cust_email'])){echo htmlspecialchars($_POST['cust_email'], ENT_QUOTES, 'UTF-8');} ?>">
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for=""><?php echo LANG_VALUE_104; ?> *</label>
