@@ -136,7 +136,7 @@ if (isset($_POST['form1'])) {
                 unset($_POST['cust_phone']);
                 unset($_POST['cust_address']);
 
-                $success_message = 'Registration received. Check your Gmail inbox and verify your address before logging in.';
+                $success_message = 'Registration received. Check your email inbox and verify your address before logging in.';
             }
         }
     }
@@ -214,6 +214,10 @@ if (isset($_POST['form1'])) {
                                     <label for=""></label>
                                     <input type="submit" class="btn btn-danger" value="<?php echo LANG_VALUE_15; ?>" name="form1">
                                 </div>
+                                <div class="col-md-12 form-group">
+                                    <button type="button" class="btn btn-default" id="google-sign-in" data-endpoint="<?php echo htmlspecialchars(BASE_URL . 'firebase-google-login.php', ENT_QUOTES, 'UTF-8'); ?>" data-csrf="<?php echo htmlspecialchars($csrf->getToken(), ENT_QUOTES, 'UTF-8'); ?>"><i class="fa fa-google" aria-hidden="true"></i> Continue with Google</button>
+                                    <p id="google-auth-message" role="status" aria-live="polite"></p>
+                                </div>
                             </div>
                         </div>                        
                     </form>
@@ -223,4 +227,5 @@ if (isset($_POST['form1'])) {
     </div>
 </div>
 
+<script type="module" src="assets/js/firebase-google-login.js"></script>
 <?php require_once('footer.php'); ?>

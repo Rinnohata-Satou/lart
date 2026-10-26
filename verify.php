@@ -17,7 +17,7 @@ if (isset($_GET['mode'], $_GET['oobCode']) && $_GET['mode'] === 'verifyEmail' &&
 
 		if ($statement->rowCount() > 0) {
 			$verification_success = true;
-			$verification_message = 'Your Gmail address is verified. You can now log in.';
+            $verification_message = 'Your email address is verified. You can now log in.';
 		} else {
 			$verification_message = 'Your email was verified, but no matching customer account was found. Please contact support.';
 		}

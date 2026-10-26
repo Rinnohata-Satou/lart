@@ -38,7 +38,7 @@ if(isset($_POST['form1'])) {
                 if($cust_status == 0) {
                     $error_message .= LANG_VALUE_148.'<br>';
                 } elseif ((int)$row['cust_email_verified'] !== 1) {
-                    $error_message .= 'Please verify your Gmail address using the link we emailed you before logging in.<br>';
+                    $error_message .= 'Please verify your email address using the link we emailed you before logging in.<br>';
                 } else {
                     $_SESSION['customer'] = $row;
                     header("location: ".BASE_URL."dashboard.php");
@@ -93,6 +93,10 @@ if(isset($_POST['form1'])) {
                                     <label for=""></label>
                                     <input type="submit" class="btn btn-success" value="<?php echo LANG_VALUE_4; ?>" name="form1">
                                 </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-default" id="google-sign-in" data-endpoint="<?php echo htmlspecialchars(BASE_URL . 'firebase-google-login.php', ENT_QUOTES, 'UTF-8'); ?>" data-csrf="<?php echo htmlspecialchars($csrf->getToken(), ENT_QUOTES, 'UTF-8'); ?>"><i class="fa fa-google" aria-hidden="true"></i> Continue with Google</button>
+                                    <p id="google-auth-message" role="status" aria-live="polite"></p>
+                                </div>
                             </div>
                         </div>                        
                     </form>
@@ -102,4 +106,5 @@ if(isset($_POST['form1'])) {
     </div>
 </div>
 
+<script type="module" src="assets/js/firebase-google-login.js"></script>
 <?php require_once('footer.php'); ?>
