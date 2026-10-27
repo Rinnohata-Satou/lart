@@ -27,6 +27,7 @@ if( !isset($_REQUEST['msg']) ) {
 		$cart_prices = array_values($_SESSION['cart_p_current_price']);
 		$cart_item_count = count($cart_product_ids);
 		if(
+			$cart_item_count === 0 ||
 			count($cart_product_names) !== $cart_item_count ||
 			count($cart_size_names) !== $cart_item_count ||
 			count($cart_color_names) !== $cart_item_count ||

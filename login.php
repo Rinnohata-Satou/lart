@@ -79,13 +79,8 @@ if(isset($_POST['form1'])) {
                                     <input type="email" class="form-control" name="cust_email">
                                 </div>
                                 <div class="form-group">
-                                    <label for="cust_password"><?php echo LANG_VALUE_96; ?> *</label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="cust_password" name="cust_password">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" data-password-toggle="cust_password" aria-controls="cust_password" aria-label="Show password" aria-pressed="false"><i class="fa fa-eye" aria-hidden="true"></i><span class="sr-only">Show password</span></button>
-                                        </span>
-                                    </div>
+                                    <label for=""><?php echo LANG_VALUE_96; ?> *</label>
+                                    <input type="password" class="form-control" name="cust_password">
                                 </div>
                                 <div class="form-group">
                                     <label for=""></label>

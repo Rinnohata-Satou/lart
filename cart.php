@@ -25,43 +25,36 @@ foreach ($result as $row) {
 
 $proceed_to_checkout = isset($_POST['proceed_to_checkout']);
 if(isset($_POST['form1']) || $proceed_to_checkout) {
-
-    $i=0;
-    foreach($_POST['product_id'] as $val) {
-        $i++;
-        $arr1[$i] = $val;
-    }
-    $i=0;
-    foreach($_POST['quantity'] as $val) {
-        $i++;
-        $arr2[$i] = $val;
-    }
-    $i=0;
-    foreach($_POST['product_name'] as $val) {
-        $i++;
-        $arr3[$i] = $val;
-    }
-    
-    $allow_update = 1;
-    for($i=1;$i<=count($arr1);$i++) {
-        $submitted_quantities[$i] = is_scalar($arr2[$i]) ? (string)$arr2[$i] : '';
-        $product_id = is_scalar($arr1[$i]) ? (string)$arr1[$i] : '';
-        $quantity = filter_var($submitted_quantities[$i], FILTER_VALIDATE_INT);
-        if(!isset($product_stock[$product_id]) || $quantity === false || $quantity < 1 || $quantity > $product_stock[$product_id]) {
-            $allow_update = 0;
-            $available_quantity = isset($product_stock[$product_id]) ? $product_stock[$product_id] : 0;
-            $quantity_errors[] = $arr3[$i].': only '.$available_quantity.' item(s) remain in stock.';
+    $cart_keys = isset($_SESSION['cart_p_id']) ? array_keys($_SESSION['cart_p_id']) : array();
+    $posted_ids = isset($_POST['product_id']) && is_array($_POST['product_id']) ? array_values($_POST['product_id']) : array();
+    $posted_quantities = isset($_POST['quantity']) && is_array($_POST['quantity']) ? array_values($_POST['quantity']) : array();
+    $validated_quantities = array();
+    $requested_totals = array();
+    if (!$cart_keys || count($posted_ids) !== count($cart_keys) || count($posted_quantities) !== count($cart_keys)) {
+        $quantity_errors[] = 'Your cart changed. Please refresh the page and try again.';
+    } else {
+        foreach ($cart_keys as $position => $cart_key) {
+            $product_id = $_SESSION['cart_p_id'][$cart_key];
+            $raw_quantity = is_scalar($posted_quantities[$position]) ? (string)$posted_quantities[$position] : '';
+            $submitted_quantities[$position + 1] = $raw_quantity;
+            $quantity = filter_var($raw_quantity, FILTER_VALIDATE_INT);
+            if (!is_scalar($posted_ids[$position]) || (string)$posted_ids[$position] !== (string)$product_id || $quantity === false || $quantity < 1 || !isset($product_stock[$product_id])) {
+                $quantity_errors[] = 'Please enter a valid quantity for each cart item.';
+                continue;
+            }
+            $validated_quantities[$cart_key] = $quantity;
+            if (!isset($requested_totals[$product_id])) $requested_totals[$product_id] = 0;
+            $requested_totals[$product_id] += $quantity;
+        }
+        foreach ($requested_totals as $product_id => $quantity) {
+            if ($quantity > $product_stock[$product_id]) {
+                $quantity_errors[] = 'Product #'.(int)$product_id.': only '.max(0, $product_stock[$product_id]).' item(s) remain in stock.';
+            }
         }
     }
-
-    if($allow_update) {
-        for($i=1;$i<=count($arr1);$i++) {
-            $_SESSION['cart_p_qty'][$i] = (int)$arr2[$i];
-        }
-        if($proceed_to_checkout) {
-            header('location: checkout.php');
-            exit;
-        }
+    if (!$quantity_errors) {
+        foreach ($validated_quantities as $cart_key => $quantity) $_SESSION['cart_p_qty'][$cart_key] = $quantity;
+        if ($proceed_to_checkout) { header('location: checkout.php'); exit; }
         $cart_updated = true;
     }
 }
