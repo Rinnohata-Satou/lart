@@ -51,3 +51,5 @@ body p,body label,.page h2,.page h3,.page h4,.sidebar h2,.sidebar h3,.sidebar ul
 
 /* Inventory counts use the Solari palette. */
 .product .text .stock-availability,.product .p-stock-availability{color:#000;font-size:14px;font-weight:600;text-align:left;margin:10px 0;line-height:1.5}.product .p-stock-availability{display:inline-block;padding:7px 12px;background:#E7C79B;border-radius:5px}.product .btn-cart1 input[disabled],.product input.qty[disabled]{opacity:.55;cursor:not-allowed}.product .out-of-stock .inner{background:#E7C79B;color:#000;border:1px solid #A65E2E;text-decoration:none;border-radius:5px}
+
+.password-input-wrapper{position:relative}.password-input-wrapper .form-control{padding-right:44px}.password-toggle-button{position:absolute;top:0;right:0;height:100%;width:42px;padding:0;border:0;border-radius:0 5px 5px 0;background:transparent;color:var(--ink);cursor:pointer}.password-toggle-button:hover,.password-toggle-button:focus{background:transparent;color:var(--brown)}.password-toggle-button:focus-visible{outline:2px solid var(--ink);outline-offset:-3px}
