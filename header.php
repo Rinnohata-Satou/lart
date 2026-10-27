@@ -232,6 +232,8 @@ foreach ($result as $row) {
 
 <?php echo $before_head; ?>
 
+<link rel="stylesheet" href="assets/css/solari-theme.css">
+<link rel="stylesheet" href="assets/css/solari-navigation.css">
 </head>
 <body>
 
@@ -241,49 +243,39 @@ foreach ($result as $row) {
 	<div id="status"></div>
 </div>-->
 
-<!-- top bar -->
-<div class="top">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-6 col-sm-6 col-xs-12">
-				<div class="left">
-					<ul>
-						<li><i class="fa fa-phone"></i> +956790934586</li>
-						<li><i class="fa fa-envelope-o"></i> <?php echo $contact_email; ?></li>
-					</ul>
-				</div>
-			</div>
-			<div class="col-md-6 col-sm-6 col-xs-12">
-				<div class="right">
-					<ul>
-						<?php
-						$statement = $pdo->prepare("SELECT * FROM tbl_social");
-						$statement->execute();
-						$result = $statement->fetchAll(PDO::FETCH_ASSOC);
-						foreach ($result as $row) {
-							?>
-							<?php if($row['social_url'] != ''): ?>
-							<li><a href="<?php echo $row['social_url']; ?>"><i class="<?php echo $row['social_icon']; ?>"></i></a></li>
-							<?php endif; ?>
-							<?php
-						}
-						?>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 
-
-<div class="header">
-	<div class="container">
-		<div class="row inner">
-			<div class="col-md-4 logo">
-				<a href="index.php"><img src="assets/images/Solari.png" alt="logo image"></a>
-			</div>
-			
-			<div class="col-md-5 right">
+<header class="solari-navbar">
+ <div class="solari-nav-inner">
+  <a class="solari-brand" href="index.php"><img src="assets/images/Solari.png" alt="Solari home"></a>
+  <button class="solari-mobile-toggle" type="button" aria-expanded="false" aria-controls="solari-navigation"><i class="fa fa-bars" aria-hidden="true"></i><span class="sr-only">Toggle navigation</span></button>
+  <nav id="solari-navigation" class="solari-navigation" aria-label="Main navigation">
+   <a class="solari-nav-link" href="index.php">Home</a>
+   <details class="solari-shop"><summary class="solari-nav-link" aria-controls="solari-shop-categories">Shop <i class="fa fa-angle-down" aria-hidden="true"></i></summary>
+<div class="solari-shop-panel" id="solari-shop-categories"><div class="solari-shop-heading">Explore solar solutions</div><div class="solari-category-grid">
+<?php
+$statement = $pdo->prepare("SELECT * FROM tbl_top_category WHERE show_on_menu=1");
+$statement->execute();
+foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row): ?>
+<section class="solari-category-group"><h3><a href="product-category.php?id=<?php echo (int)$row['tcat_id']; ?>&amp;type=top-category"><?php echo htmlspecialchars($row['tcat_name'], ENT_QUOTES, 'UTF-8'); ?></a></h3>
+<?php
+$statement1 = $pdo->prepare("SELECT * FROM tbl_mid_category WHERE tcat_id=?");
+$statement1->execute(array($row['tcat_id']));
+foreach ($statement1->fetchAll(PDO::FETCH_ASSOC) as $row1): ?>
+<div class="solari-subcategory"><a class="solari-subcategory-title" href="product-category.php?id=<?php echo (int)$row1['mcat_id']; ?>&amp;type=mid-category"><?php echo htmlspecialchars($row1['mcat_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+<ul class="solari-category-links">
+<?php
+$statement2 = $pdo->prepare("SELECT * FROM tbl_end_category WHERE mcat_id=?");
+$statement2->execute(array($row1['mcat_id']));
+foreach ($statement2->fetchAll(PDO::FETCH_ASSOC) as $row2): ?>
+<li><a href="product-category.php?id=<?php echo (int)$row2['ecat_id']; ?>&amp;type=end-category"><?php echo htmlspecialchars($row2['ecat_name'], ENT_QUOTES, 'UTF-8'); ?></a></li>
+<?php endforeach; ?>
+</ul></div><?php endforeach; ?>
+</section><?php endforeach; ?>
+</div></div></details>
+   <a class="solari-nav-link" href="about.php">About</a><a class="solari-nav-link" href="faq.php">FAQ</a>
+  </nav>
+  <button type="button" class="solari-search-toggle" aria-controls="solari-search-panel" aria-expanded="false" aria-label="Open product search"><i class="fa fa-search" aria-hidden="true"></i></button>
+  <div class="solari-actions">
 				<ul>
 					
 					<?php
@@ -316,7 +308,7 @@ foreach ($result as $row) {
 	                    }
 	                    $table_total_price = 0; // Initialize the variable to a numeric value
 for ($i = 1; $i <= count($arr_cart_p_qty); $i++) {
-    $row_total_price = (float)str_replace(',', '', $arr_cart_p_current_price[$i]) * (float)$arr_cart_p_qty[$i];
+    $row_total_price = (float)str_replace(',', '', $arr_cart_p_current_price[$i]) * (float)$arr_cart_p_qty[$i]; // Convert the values to floats
     $table_total_price += $row_total_price;
 }
 echo number_format($table_total_price, 2);
@@ -324,85 +316,14 @@ echo number_format($table_total_price, 2);
 					?>)</a></li>
 				</ul>
 			</div>
-			<div class="col-md-3 search-area">
-				<form class="navbar-form navbar-left" role="search" action="search-result.php" method="get">
+			
+ </div>
+</header>
+<div id="solari-search-panel" class="solari-search-panel" hidden role="region" aria-label="Product search"><div class="solari-search-inner"><form class="solari-search-form" role="search" action="search-result.php" method="get">
 					<?php $csrf->echoInputField(); ?>
-					<div class="form-group">
-						<input type="text" class="form-control search-top" placeholder="<?php echo LANG_VALUE_2; ?>" name="search_text">
+					<div class="form-group"><label class="sr-only" for="solari-search-input">Search products</label>
+						<input type="text" id="solari-search-input" class="form-control search-top" required placeholder="<?php echo LANG_VALUE_2; ?>" name="search_text">
 					</div>
 					<button type="submit" class="btn btn-danger"><?php echo LANG_VALUE_3; ?></button>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="nav">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12 pl_0 pr_0">
-				<div class="menu-container">
-					<div class="menu">
-						<ul>
-							<li><a href="index.php">Home</a></li>
-							
-							<?php
-							$statement = $pdo->prepare("SELECT * FROM tbl_top_category WHERE show_on_menu=1");
-							$statement->execute();
-							$result = $statement->fetchAll(PDO::FETCH_ASSOC);
-							foreach ($result as $row) {
-								?>
-								<li><a href="product-category.php?id=<?php echo $row['tcat_id']; ?>&type=top-category"><?php echo $row['tcat_name']; ?></a>
-									<ul>
-										<?php
-										$statement1 = $pdo->prepare("SELECT * FROM tbl_mid_category WHERE tcat_id=?");
-										$statement1->execute(array($row['tcat_id']));
-										$result1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
-										foreach ($result1 as $row1) {
-											?>
-											<li><a href="product-category.php?id=<?php echo $row1['mcat_id']; ?>&type=mid-category"><?php echo $row1['mcat_name']; ?></a>
-												<ul>
-													<?php
-													$statement2 = $pdo->prepare("SELECT * FROM tbl_end_category WHERE mcat_id=?");
-													$statement2->execute(array($row1['mcat_id']));
-													$result2 = $statement2->fetchAll(PDO::FETCH_ASSOC);
-													foreach ($result2 as $row2) {
-														?>
-														<li><a href="product-category.php?id=<?php echo $row2['ecat_id']; ?>&type=end-category"><?php echo $row2['ecat_name']; ?></a></li>
-														<?php
-													}
-													?>
-												</ul>
-											</li>
-											<?php
-										}
-										?>
-									</ul>
-								</li>
-								<?php
-							}
-							?>
-
-							<?php
-							$statement = $pdo->prepare("SELECT * FROM tbl_page WHERE id=1");
-							$statement->execute();
-							$result = $statement->fetchAll(PDO::FETCH_ASSOC);		
-							foreach ($result as $row) {
-								$about_title = $row['about_title'];
-								$faq_title = $row['faq_title'];
-								$blog_title = $row['blog_title'];
-								$contact_title = $row['contact_title'];
-								$pgallery_title = $row['pgallery_title'];
-								$vgallery_title = $row['vgallery_title'];
-							}
-							?>
-
-							<li><a href="about.php"><?php echo $about_title; ?></a></li>
-							<li><a href="faq.php"><?php echo $faq_title; ?></a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+				</form><button class="solari-search-close" type="button" aria-label="Close search"><i class="fa fa-times" aria-hidden="true"></i></button></div></div>
+<script src="assets/js/solari-navigation.js" defer></script>
