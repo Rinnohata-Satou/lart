@@ -194,20 +194,20 @@ if (isset($_POST['form1'])) {
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for="cust_password"><?php echo LANG_VALUE_96; ?> *</label>
-                                    <div class="input-group">
+                                    <div class="password-input-wrapper">
                                         <input type="password" class="form-control" id="cust_password" name="cust_password">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" data-password-toggle="cust_password" aria-controls="cust_password" aria-label="Show password" aria-pressed="false"><i class="fa fa-eye" aria-hidden="true"></i><span class="sr-only">Show password</span></button>
-                                        </span>
+                                        <button type="button" class="password-toggle-button" data-target="cust_password" aria-label="Show password" aria-pressed="false" onclick="var input = document.getElementById(this.getAttribute('data-target')); input.type = input.type === 'password' ? 'text' : 'password'; this.setAttribute('aria-pressed', input.type === 'text'); this.setAttribute('aria-label', input.type === 'text' ? 'Hide password' : 'Show password'); this.querySelector('i').className = input.type === 'text' ? 'fa fa-eye-slash' : 'fa fa-eye';">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label for="cust_re_password"><?php echo LANG_VALUE_98; ?> *</label>
-                                    <div class="input-group">
+                                    <div class="password-input-wrapper">
                                         <input type="password" class="form-control" id="cust_re_password" name="cust_re_password">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" data-password-toggle="cust_re_password" aria-controls="cust_re_password" aria-label="Show password" aria-pressed="false"><i class="fa fa-eye" aria-hidden="true"></i><span class="sr-only">Show password</span></button>
-                                        </span>
+                                        <button type="button" class="password-toggle-button" data-target="cust_re_password" aria-label="Show password" aria-pressed="false" onclick="var input = document.getElementById(this.getAttribute('data-target')); input.type = input.type === 'password' ? 'text' : 'password'; this.setAttribute('aria-pressed', input.type === 'text'); this.setAttribute('aria-label', input.type === 'text' ? 'Hide password' : 'Show password'); this.querySelector('i').className = input.type === 'text' ? 'fa fa-eye-slash' : 'fa fa-eye';">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-md-6 form-group">

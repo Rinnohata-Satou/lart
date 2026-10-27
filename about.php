@@ -17,14 +17,13 @@ foreach ($result as $row) {
     </div>
 </div>
 
-<div class="page">
+<div class="page solari-about-page">
     <div class="container">
         <div class="row">            
             <div class="col-md-12">
                 
-                <p><img src="assets/uploads/about-banner.png"></p>
-                    <?php echo $about_content; ?>
-                </p>
+                <p><img src="assets/uploads/about-banner.png" alt="Solari solar energy solutions"></p>
+                <article class="solari-about-content"><?php echo $about_content; ?></article>
 
                 
 

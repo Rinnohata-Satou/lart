@@ -125,7 +125,16 @@ if(isset($_POST['form_add_to_cart'])) {
 	foreach ($result as $row) {
 		$current_p_qty = $row['p_qty'];
 	}
-	if($_POST['p_qty'] > $current_p_qty):
+	$requested_qty = isset($_POST['p_qty']) && is_scalar($_POST['p_qty']) ? filter_var($_POST['p_qty'], FILTER_VALIDATE_INT) : false;
+    $cart_product_total = 0;
+    if (isset($_SESSION['cart_p_id'])) {
+        foreach ($_SESSION['cart_p_id'] as $cart_key => $cart_id) {
+            if ((string)$cart_id === (string)$_REQUEST['id']) {
+                $cart_product_total += (int)$_SESSION['cart_p_qty'][$cart_key];
+            }
+        }
+    }
+    if($requested_qty === false || $requested_qty < 1 || $requested_qty + $cart_product_total > (int)$current_p_qty):
 		$temp_msg = 'Sorry! There are only '.$current_p_qty.' item(s) in stock';
 		?>
 		<script type="text/javascript">alert('<?php echo $temp_msg; ?>');</script>
@@ -464,16 +473,16 @@ if($success_message1 != '') {
                                     ₱<?php echo $p_current_price; ?>
                                 </span>
                             </div>
-                            <p class="p-stock-availability">Remaining stock: <?php echo (int)$p_qty; ?></p>
+                            <p class="p-stock-availability">Remaining stock: <?php echo max(0, (int)$p_qty); ?></p>
                             <input type="hidden" name="p_current_price" value="<?php echo $p_current_price; ?>">
                             <input type="hidden" name="p_name" value="<?php echo $p_name; ?>">
                             <input type="hidden" name="p_featured_photo" value="<?php echo $p_featured_photo; ?>">
 							<div class="p-quantity">
                                 <?php echo LANG_VALUE_55; ?> <br>
-								<input type="number" class="input-text qty" step="1" min="1" max="" name="p_qty" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric">
+								<input type="number" class="input-text qty" step="1" min="1" max="<?php echo max(0, (int)$p_qty); ?>" <?php if((int)$p_qty <= 0) echo 'disabled'; ?> required name="p_qty" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric">
 							</div>
 							<div class="btn-cart btn-cart1">
-                                <input type="submit" value="<?php echo LANG_VALUE_154; ?>" name="form_add_to_cart">
+                                <input type="submit" value="<?php echo LANG_VALUE_154; ?>" name="form_add_to_cart" <?php if((int)$p_qty <= 0) echo 'disabled'; ?>>
 							</div>
                             </form>
 							<div class="share">
@@ -675,10 +684,9 @@ if($success_message1 != '') {
                     foreach ($result as $row) {
                         ?>
                         <div class="item">
-                            <div class="thumb">
-                                <div class="photo" style="background-image:url(assets/uploads/<?php echo $row['p_featured_photo']; ?>);"></div>
-                                <div class="overlay"></div>
-                            </div>
+                            <a class="thumb product-image-link" href="product.php?id=<?php echo (int)$row['p_id']; ?>" aria-label="View <?php echo htmlspecialchars($row['p_name'], ENT_QUOTES, 'UTF-8'); ?>">
+<div class="photo" style="background-image:url(assets/uploads/<?php echo $row['p_featured_photo']; ?>);"></div>
+</a>
                             <div class="text">
                                 <h3><a href="product.php?id=<?php echo $row['p_id']; ?>"><?php echo $row['p_name']; ?></a></h3>
                                 <h4>
@@ -758,14 +766,8 @@ if($success_message1 != '') {
                                     }
                                     ?>
                                 </div>
-                                <p class="stock-availability">Remaining stock: <?php echo (int)$row['p_qty']; ?></p>
-                                <?php if((int)$row['p_qty'] === 0): ?>
-                                    <div class="out-of-stock">
-                                        <div class="inner">Out Of Stock</div>
-                                    </div>
-                                <?php else: ?>
-                                    <p><a href="product.php?id=<?php echo $row['p_id']; ?>"><?php echo LANG_VALUE_154; ?></a></p>
-                                <?php endif; ?>
+                                <p class="stock-availability">Remaining stock: <?php echo max(0, (int)$row['p_qty']); ?></p>
+<?php if((int)$row['p_qty'] <= 0): ?><div class="out-of-stock"><div class="inner">Out Of Stock</div></div><?php else: ?><p><a href="product.php?id=<?php echo $row['p_id']; ?>"><?php echo LANG_VALUE_154; ?></a></p><?php endif; ?>
                             </div>
                         </div>
                         <?php

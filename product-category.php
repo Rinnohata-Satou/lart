@@ -166,10 +166,9 @@ if( !isset($_REQUEST['id']) || !isset($_REQUEST['type']) ) {
                                     ?>
                                     <div class="col-md-4 item item-product-cat">
                                         <div class="inner">
-                                            <div class="thumb">
-                                                <div class="photo" style="background-image:url(assets/uploads/<?php echo $row['p_featured_photo']; ?>);"></div>
-                                                <div class="overlay"></div>
-                                            </div>
+                                            <a class="thumb product-image-link" href="product.php?id=<?php echo (int)$row['p_id']; ?>" aria-label="View <?php echo htmlspecialchars($row['p_name'], ENT_QUOTES, 'UTF-8'); ?>">
+<div class="photo" style="background-image:url(assets/uploads/<?php echo $row['p_featured_photo']; ?>);"></div>
+</a>
                                             <div class="text">
                                                 <h3><a href="product.php?id=<?php echo $row['p_id']; ?>"><?php echo $row['p_name']; ?></a></h3>
                                                 <h4>
@@ -249,8 +248,8 @@ if( !isset($_REQUEST['id']) || !isset($_REQUEST['type']) ) {
                                                     }
                                                     ?>
                                                 </div>
-                                                <p class="stock-availability">Remaining stock: <?php echo (int)$row['p_qty']; ?></p>
-                                                <?php if($row['p_qty'] == 0): ?>
+                                                <p class="stock-availability">Remaining stock: <?php echo max(0, (int)$row['p_qty']); ?></p>
+<?php if($row['p_qty'] == 0): ?>
                                                     <div class="out-of-stock">
                                                         <div class="inner">
                                                             Out Of Stock
