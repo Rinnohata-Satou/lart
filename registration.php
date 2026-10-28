@@ -73,7 +73,7 @@ if (isset($_POST['form1'])) {
             if ($firebase_signup['error'] === 'EMAIL_EXISTS') {
                 $error_message .= 'This Gmail address is already registered.<br>';
             } else {
-                $error_message .= 'Firebase sign-up could not be completed. Check the Firebase setup and try again.<br>';
+                $error_message .= htmlspecialchars(firebase_auth_error_message($firebase_signup['error'], 'signup'), ENT_QUOTES, 'UTF-8').'<br>';
             }
             $valid = 0;
         }

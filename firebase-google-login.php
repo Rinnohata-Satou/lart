@@ -27,7 +27,8 @@ if ($id_token === '') {
 
 $firebase_result = firebase_auth_request('accounts:lookup', array('idToken' => $id_token));
 if (!$firebase_result['ok'] || empty($firebase_result['data']['users'][0])) {
-	google_login_response(401, array('error' => 'Google sign-in could not be verified.'));
+	$error = isset($firebase_result['error']) ? firebase_auth_error_message($firebase_result['error'], 'google') : 'Google sign-in could not be verified.';
+	google_login_response(401, array('error' => $error));
 }
 
 $firebase_user = $firebase_result['data']['users'][0];

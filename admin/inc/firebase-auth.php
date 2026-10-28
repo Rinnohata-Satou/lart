@@ -3,10 +3,10 @@ function firebase_auth_request($endpoint, $payload)
 {
 	$api_key = getenv('FIREBASE_API_KEY');
 	if (!$api_key) {
-		return array('ok' => false, 'error' => 'Firebase is not configured.');
+		$api_key = 'AIzaSyCKAv02Qh0eFAaNwNq2-xAiyvZEL27W0kU';
 	}
 	if (!function_exists('curl_init')) {
-		return array('ok' => false, 'error' => 'The PHP cURL extension is required.');
+		return array('ok' => false, 'error' => 'CURL_NOT_AVAILABLE');
 	}
 
 	$url = 'https://identitytoolkit.googleapis.com/v1/' . $endpoint . '?key=' . rawurlencode($api_key);
@@ -37,4 +37,40 @@ function firebase_auth_request($endpoint, $payload)
 	}
 
 	return array('ok' => true, 'data' => $response);
+}
+
+function firebase_auth_error_message($error, $action)
+{
+	$error_code = trim(explode(':', $error, 2)[0]);
+	if ($error === 'CURL_NOT_AVAILABLE') {
+		return 'The PHP cURL extension is required to connect to Firebase.';
+	}
+	if (in_array($error_code, array('API_KEY_INVALID', 'API_KEY_SERVICE_BLOCKED', 'API_KEY_HTTP_REFERRER_BLOCKED', 'API_KEY_IP_ADDRESS_BLOCKED', 'PROJECT_NOT_FOUND'), true)) {
+		return 'Firebase rejected the server API key. Check that FIREBASE_API_KEY matches the web app config and allows the Identity Toolkit API.';
+	}
+	if ($error_code === 'OPERATION_NOT_ALLOWED') {
+		return $action === 'signup'
+			? 'Email/Password sign-in is disabled in Firebase Authentication. Enable it and try again.'
+			: 'Google sign-in is disabled in Firebase Authentication. Enable it and try again.';
+	}
+	if ($error_code === 'WEAK_PASSWORD') {
+		return 'Choose a stronger password. Firebase requires at least 6 characters.';
+	}
+	if ($error_code === 'INVALID_EMAIL') {
+		return 'Enter a valid email address and try again.';
+	}
+	if ($error_code === 'TOO_MANY_ATTEMPTS_TRY_LATER') {
+		return 'Too many attempts. Wait a little while, then try again.';
+	}
+	if ($action === 'google' && in_array($error_code, array('INVALID_ID_TOKEN', 'TOKEN_EXPIRED', 'INVALID_IDP_RESPONSE'), true)) {
+		return 'Google sign-in could not be verified. Confirm the browser and server use the same Firebase project, then try again.';
+	}
+
+	if (preg_match('/^[A-Z0-9_]+$/', $error_code)) {
+		return 'Firebase returned error code ' . $error_code . '. Check the Firebase Authentication setup and try again.';
+	}
+
+	return $action === 'signup'
+		? 'Firebase sign-up could not be completed. Check the Firebase setup and try again.'
+		: 'Google sign-in could not be verified. Check the Firebase setup and try again.';
 }
